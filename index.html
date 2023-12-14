@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id = "chart"></canvas>
+   
+    <script>
+        const ela = [];
+        const math = [];
+
+        makeChart();
+
+        async function getData()
+        {
+            const source = await fetch('SAT.csv'); //gets data
+            const data  = await source.text(); //converts data to text
+            console.log(data); //places the data which is an array into the console *Only shown in live servers for some reason*
+            const rows = data.split("\n").slice(1); //Ignores the first element in the array (removes the element labels)
+            //Makes rows that only show two variables from the array
+            rows.forEach((elem) => {
+                const row = elem.split(","); //°C
+                const reading = row[3];
+                ela.push(reading);
+                const score = row[4];
+                math.push(score);
+                console.log(reading, score);
+            });
+        }
+       
+        async function makeChart()
+        {
+            await getData();
+            const ctx = document.getElementById('chart'); //Selects tag
+       
+            //Chart  
+            const chart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    labels: ela,
+                    datasets: [{
+                        label: 'Average SAT Scores from Different High Schools (2010)', //I don't know how to label them to show the school names too
+                        data: math,
+                        borderColor: 'rgb(247, 96, 96)', //color
+                        borderWidth: 1.5,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { //y-axis number range
+                            beginAtZero: true,
+                            suggestedMax: 800
+                        },
+                        x: {
+                            beginAtZero: true,
+                            suggestedMax: 800
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
